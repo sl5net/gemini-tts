@@ -1,0 +1,10 @@
+# Python virtual environment
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# SSL Certificates and Keys - NEVER commit these!
+key.pem
+cert.pem
