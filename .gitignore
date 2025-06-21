@@ -4,6 +4,8 @@ venv/
 # Python cache files
 __pycache__/
 *.pyc
+*.wav
+*.txt
 
 # SSL Certificates and Keys - NEVER commit these!
 key.pem
