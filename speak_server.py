@@ -113,13 +113,15 @@ def speak():
 
         # 3. Speichern der Audiodatei mit Zeitstempel
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+        slug = create_slug(text_to_speak)
+
         output_filename = f"{timestamp}_{slug}.wav"
 
 
 
 
 
-        slug = create_slug(text_to_speak)
 
 
 
