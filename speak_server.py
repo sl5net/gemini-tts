@@ -31,7 +31,7 @@ MY_STOPWORDS = ['das', 'ist', 'ein', 'mit', 'und', 'a', 'is', 'with', 'the']
 # --------------------
 
 def create_slug(text, min_word_len=4):
-    # 1. Normalen Slug erstellen
+    # https://github.com/un33k/python-slugify
     initial_slug = slugify(text, stopwords=MY_STOPWORDS, max_length=80)
 
 
@@ -119,7 +119,7 @@ def speak():
         ###############################
         ###############################
         ###############################
-        slug = create_slug(text_to_speak)
+        slug = create_slug(text_to_speak, min_word_len=5)
         ###############################
         ###############################
         ###############################
