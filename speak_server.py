@@ -32,7 +32,9 @@ MY_STOPWORDS = ['das', 'ist', 'ein', 'mit', 'und', 'a', 'is', 'with', 'the']
 
 def create_slug(text, min_word_len=4):
     # 1. Normalen Slug erstellen
-    initial_slug = slugify(text, stopwords=MY_STOPWORDS)
+    initial_slug = slugify(text, stopwords=MY_STOPWORDS, max_length=80)
+
+
 
     # 2. Kurze Wörter herausfiltern
     words = initial_slug.split('-')
@@ -114,17 +116,15 @@ def speak():
         # 3. Speichern der Audiodatei mit Zeitstempel
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+        ###############################
+        ###############################
+        ###############################
         slug = create_slug(text_to_speak)
+        ###############################
+        ###############################
+        ###############################
 
         output_filename = f"{timestamp}_{slug}.wav"
-
-
-
-
-
-
-
-
 
         output_filename_txt = f"{timestamp}_{slug}.txt"
 
