@@ -19,12 +19,58 @@ HTTPS_URL = f"https://{HOST}:{PORT}/speak"
 HTTP_URL = f"http://{HOST}:{PORT}/speak"
 # ---
 
-parser = argparse.ArgumentParser(description="Helper-Script for the Dictation-Service")
-parser.add_argument('file', help='Text file to be read')
+# Initialize the parser
+parser = argparse.ArgumentParser(
+    description='A script that optionally reads a file.'
+)
+
+# Add an optional argument. Prefixes like '-' or '--' make it optional.
+# We can now call the script with: python your_script.py --file my_file.txt
+#parser.add_argument(
+#    '-f', '--file',
+#    help='Optional text file to be read',
+#    metavar='FILENAME'  # This is just for a cleaner help message
+#)
+
+parser.add_argument(
+    'file',
+    nargs='?',
+    default=None,
+    help='Optional text file to be read (positional)',
+    metavar='FILENAME'
+)
+
+
+
+# Parse the arguments from the command line
 args = parser.parse_args()
 
-with open(args.file, 'r') as f:
-    content = f.read()
+
+# --- Main Logic ---
+content = 'None'
+# connect = ''
+
+# Check if a filename was provided on the command line
+if args.file:
+    # A filename was provided, so we try to open it
+    try:
+        with open(args.file, 'r') as f:
+            content = f.read()
+
+        # Optional: Check if the file, although present, is empty
+        if not content:
+            print(f"Info: File '{args.file}' exists but is empty.")
+
+    except FileNotFoundError:
+        print(f"Error: The file '{args.file}' was not found.")
+        sys.exit(1) # Exit with an error code
+    except Exception as e:
+        print(f"An error occurred while reading the file: {e}")
+        sys.exit(1) # Exit with an error code
+else:
+    # No filename was provided. Set the default message.
+    content = 'Hello! Aou also could send text-files to me'
+
 
 with open('/tmp/speak_server_input.txt', 'w') as f:
     f.write(content)
