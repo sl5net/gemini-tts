@@ -116,7 +116,7 @@ This script adds a test button to quickly check if the connection to the local T
     *   Keep this terminal window running.
 
 1.2.  **Start the Server Option 2:** (probably the most easiest way to start)
-    *   Open a terminal in your project folder (`~/projects/py/speak_server`).
+    *   Open a terminal 
     *   run `python3 ~/projects/py/speak_server/speak_file.py`
 
 1.3.  **Start the Server Option 3:**
