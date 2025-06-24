@@ -85,5 +85,9 @@ if result.returncode != 0:
     system.exec_command(start_command)
     time.sleep(5)
 
+# system.exec_command(f"notify-send 'model:' '{vosk_model}'")
+
 system.exec_command(f'touch {trigger_file}')
 
+# how are you what to nameno everything looks like expected
+#

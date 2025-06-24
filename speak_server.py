@@ -495,12 +495,30 @@ def speak():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
-    print(f"Finaler Sprach-Server (mit CORS) startet auf https://127.0.0.1:{PORT}")
+    # Schritt 1: Konfiguration vorbereiten
+    ssl_config = None
+    protocol = 'http'
     try:
-        ssl_context = ('cert.pem', 'key.pem')
-        app.run(host='127.0.0.1', port=PORT, ssl_context=ssl_context)
+        # Versuche, den SSL-Kontext zu laden. Starte den Server hier NICHT.
+        ssl_config = ('cert.pem', 'key.pem')
+
+        # Man könnte hier prüfen, ob die Dateien wirklich existieren, um eine saubere Logik zu haben.
+        # Aber für den Zweck der Fehlerbehebung reicht das so.
+        # Wenn 'cert.pem' nicht da ist, löst das Laden im `app.run` später den Fehler aus.
+        # Die bessere Variante ist, die Existenz vorher zu prüfen:
+        import os
+        if os.path.exists('cert.pem') and os.path.exists('key.pem'):
+            protocol = 'https'
+            print("SSL-Zertifikate gefunden. Server wird mit HTTPS starten.")
+        else:
+            raise FileNotFoundError # Erzwinge den Sprung in den except-Block
+
     except FileNotFoundError:
         print("\n--- WARNUNG ---")
         print("SSL-Zertifikatsdateien (cert.pem, key.pem) nicht gefunden.")
-        print(f"Server startet unverschlüsselt auf http://127.0.0.1:{PORT}")
-        app.run(host='127.0.0.1', port=PORT)
+        ssl_config = None # Stelle sicher, dass die Konfiguration leer ist
+        protocol = 'http'
+
+    # Schritt 2: Den Server EINMAL mit der fertigen Konfiguration starten
+    print(f"Finaler Sprach-Server startet auf {protocol}://127.0.0.1:{PORT}")
+    app.run(host='127.0.0.1', port=PORT, ssl_context=ssl_config)
