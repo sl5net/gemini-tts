@@ -8,6 +8,7 @@ import wave
 import datetime
 import argparse
 import re
+import os
 
 from markdown_it import MarkdownIt
 from pygments import highlight
@@ -391,22 +392,30 @@ def speak():
     print("\n--- NEUE ANFRAGE EINGEGANGEN ---")
 
     try:
-        data = request.get_json()
-        if not data or 'text' not in data:
-            print("!!! FEHLER: JSON-Daten ungültig.")
-            return jsonify({"status": "error", "message": "Kein Text übermittelt"}), 400
+        # you can run e.g. with 'curl -k -X POST https://127.0.0.1:5002/speak'
+        if os.path.exists('/tmp/speak_server_input.txt'):
+            with open('/tmp/speak_server_input.txt', 'r') as f:
+                text_to_speak_easy = f.read()
+                print(f"Transkribiert: '{text_to_speak_easy}'")
+                os.remove('/tmp/speak_server_input.txt')
 
-        text_to_speak = data['text']
+        else:
+            data = request.get_json()
+            if not data or 'text' not in data:
+                print("!!! FEHLER: JSON-Daten ungültig.")
+                return jsonify({"status": "error", "message": "Kein Text übermittelt"}), 400
 
-        text_to_speak_easy = text_to_speak
-        text_to_speak_easy = clean_text_for_tts(text_to_speak_easy)
-        text_to_speak_easy = clean_interactive_text_for_tts(text_to_speak_easy)
-        text_to_speak_easy = clean_text_with_libraries(text_to_speak_easy)
-        text_to_speak_easy = clean_python_code_for_tts(text_to_speak_easy)
+            text_to_speak = data['text']
+
+            text_to_speak_easy = text_to_speak
+            text_to_speak_easy = clean_text_for_tts(text_to_speak_easy)
+            text_to_speak_easy = clean_interactive_text_for_tts(text_to_speak_easy)
+            text_to_speak_easy = clean_text_with_libraries(text_to_speak_easy)
+            text_to_speak_easy = clean_python_code_for_tts(text_to_speak_easy)
 
 
 
-        print(f"Erfolgreich geparster Text: {text_to_speak[:80]}...")
+        print(f"Erfolgreich geparster Text: {text_to_speak_easy[:80]}...")
 
         if args.save:
             # 1. Piper-Prozess: Audio im Speicher erzeugen (output-raw)
