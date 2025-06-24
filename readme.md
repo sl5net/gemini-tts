@@ -109,12 +109,21 @@ This script adds a test button to quickly check if the connection to the local T
 
 ## Usage
 
-1.  **Start the Server:**
+1.1.  **Start the Server Option 1:**
     *   Open a terminal in your project folder (`~/projects/py/speak_server`).
     *   Activate the environment: `source venv/bin/activate`
     *   Start the server: `python3 speak_server.py`
     *   Keep this terminal window running.
 
+1.2.  **Start the Server Option 2:**
+    *   Open a terminal in your project folder (`~/projects/py/speak_server`).
+    *   run `python3 ~/projects/py/speak_server/speak_file.py HelloWorld.txt
+
+1.3.  **Start the Server Option 3:**
+    *   Config your File-Explorer. E.g. when you use doublecomander
+    *   add option to open file with `sh`
+    *   use parameter `-c "python3 ~/projects/py/speak_server/speak_file.py %f > /tmp/speak_error.log 2>&1`
+    
 2.  **One-Time Browser Setup:**
     *   Open a new tab and navigate to `https://localhost:5002/`.
     *   Your browser will show a security warning. Click "Advanced" and then "Accept the Risk and Continue" (or similar) to trust the certificate.
