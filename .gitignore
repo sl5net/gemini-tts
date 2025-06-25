@@ -9,6 +9,7 @@ __pycache__/
 
 # NOT ignore requirements.txt
 !requirements.txt
+!requirements-dev.txt
 
 # SSL Certificates and Keys - NEVER commit these!
 key.pem
