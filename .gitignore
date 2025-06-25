@@ -7,6 +7,9 @@ __pycache__/
 *.wav
 *.txt
 
+# NOT ignore requirements.txt
+!requirements.txt
+
 # SSL Certificates and Keys - NEVER commit these!
 key.pem
 cert.pem
