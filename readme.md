@@ -1,6 +1,6 @@
 # Gemini-TTS: Automatically Read Gemini's Responses Aloud
 
-This project enables you to have responses from Google Gemini (and the Google AI Studio) automatically read aloud using a local, high-quality Text-to-Speech (TTS) engine (`piper-tts`) on Manjaro Linux.
+This project enables you to have responses from Google Gemini (and the Google AI Studio) automatically read aloud using a local, high-quality Text-to-Speech (TTS) engine (`piper-tts`).
 
 ## Objective
 
