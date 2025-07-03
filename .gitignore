@@ -1,7 +1,7 @@
 # Python virtual environment
 venv/
 
-model/*
+model/
 
 # Python cache files
 __pycache__/
