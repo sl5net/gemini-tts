@@ -2,6 +2,7 @@
 
 This project enables you to have responses from Google Gemini (and the Google AI Studio) automatically read aloud using a local, high-quality Text-to-Speech (TTS) engine (`piper-tts`).
 
+
 ## Objective
 
 The goal is a fully hands-free operation of Gemini, where the AI's answers are delivered as spoken audio output instead of requiring you to read them. This process is completely free and works offline (with the exception of the Gemini website itself).

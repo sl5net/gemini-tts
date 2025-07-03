@@ -9,9 +9,25 @@ import datetime
 import argparse
 import re
 import os
+from pathlib import Path
+
+# https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin
+# pip install fasttext
+import fasttext
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+
+
+MODEL_PATH = f"{SCRIPT_DIR}/model/lid.176.bin"
+model = fasttext.load_model(MODEL_PATH)
+
+MODELS = { 'de': f"{SCRIPT_DIR}/model/de/de_DE-kerstin-low.onnx" , 'en': f"{SCRIPT_DIR}/model/en/en_GB-jenny_dioco-medium.onnx" }
+
 
 from markdown_it import MarkdownIt
 from pygments import highlight
+
+
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import TerminalFormatter # Not for output, but for tokenizing
 from pygments.token import Comment, String
@@ -26,8 +42,13 @@ from bs4 import BeautifulSoup
 #
 # ---
 
+
+
 # --- KONFIGURATION ---
-MODEL_PATH = "/home/seeh/Downloads/de_DE-kerstin-low.onnx"
+
+# https://github.com/rhasspy/piper/blob/master/src/python_run/piper/voices.json
+# https://github.com/rhasspy/piper/blob/master/VOICES.md
+
 PORT = 5002
 
 # Audio-Parameter (müssen zur config.json des Modells passen!)
@@ -387,6 +408,11 @@ CORS(app)
 #     text = re.sub(r'[^\w-]', '', text)  # Entfernt ungültige Zeichen
 #     return text[:max_length]
 
+
+
+
+
+
 @app.route('/speak', methods=['POST'])
 def speak():
     print("\n--- NEUE ANFRAGE EINGEGANGEN ---")
@@ -402,9 +428,7 @@ def speak():
         else:
             data = request.get_json()
             if not data or 'text' not in data:
-                print("!!! FEHLER: JSON-Daten ungültig.")
                 return jsonify({"status": "error", "message": "Kein Text übermittelt"}), 400
-
             text_to_speak = data['text']
 
             text_to_speak_easy = text_to_speak
@@ -417,10 +441,37 @@ def speak():
 
         print(f"Erfolgreich geparster Text: {text_to_speak_easy[:80]}...")
 
+
+        #################################################################
+
+        # SCHRITT 1: SPRACHE ERKENNEN (dieser Block kommt jetzt nach oben)
+        predictions = model.predict(text_to_speak_easy)
+        lang_code = predictions[0][0].replace('__label__', '')
+        print(f"Erkannte Sprache für den Text: '{lang_code}'")
+
+        # SCHRITT 2: MODELL-PFAD DYNAMISCH AUSWÄHLEN
+        if lang_code == 'de' and 'de' in MODELS:
+            selected_model_path = MODELS['de']
+            print("-> Deutsches Modell wird verwendet.")
+        elif lang_code == 'en' and 'en' in MODELS:
+            selected_model_path = MODELS['en']
+            print("-> Englisches Modell wird verwendet.")
+        else:
+            # Fallback-Lösung: Wenn die Sprache nicht erkannt wird oder kein Modell dafür existiert,
+            # nehmen wir ein Standardmodell (z.B. Deutsch).
+            print(f"WARNUNG: Kein Modell für Sprache '{lang_code}' gefunden. Fallback auf Deutsch.")
+            selected_model_path = MODELS['de']
+
+        #################################################################
+
+
+
+
         if args.save:
             # 1. Piper-Prozess: Audio im Speicher erzeugen (output-raw)
             # Dadurch fangen wir die rohen Audiodaten in 'stdout' auf.
-            piper_cmd = ["piper-tts", "--model", MODEL_PATH, "--output-raw"]
+            # piper_cmd = ["piper-tts", "--model", MODEL_PATH, "--output-raw"]
+            piper_cmd = ["piper-tts", "--model", selected_model_path, "--output-raw"]
             piper_process = subprocess.Popen(
                 piper_cmd,
                 stdin=subprocess.PIPE,
@@ -428,19 +479,27 @@ def speak():
                 stderr=subprocess.PIPE
             )
 
-        # Jetzt werden 'stdout' und 'stderr' wieder korrekt befüllt
+        piper_cmd = ["piper-tts", "--model", selected_model_path, "--output-raw"]
+        piper_process = subprocess.Popen(
+            piper_cmd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
         raw_audio_data, stderr = piper_process.communicate(input=text_to_speak_easy.encode('utf-8'))
 
         if piper_process.returncode != 0:
             print("!!! FEHLER von Piper-TTS:", stderr.decode('utf-8'))
             return jsonify({"status": "error", "message": "Piper-TTS Fehler"}), 500
 
-        # Wenn keine Audiodaten erzeugt wurden, abbrechen
         if not raw_audio_data:
             print("!!! FEHLER: Piper hat keine Audiodaten erzeugt.")
             return jsonify({"status": "error", "message": "Leere Audioausgabe von Piper"}), 500
 
         print("Audio erfolgreich generiert, starte Wiedergabe...")
+
+
 
         # 2. Audio-Prozess: Die rohen Daten direkt an 'aplay' zur Wiedergabe senden
         aplay_cmd = f"aplay -r {SAMPLE_RATE} -f S16_LE -t raw -"
@@ -467,8 +526,6 @@ def speak():
         # output_filename_txt = f"{timestamp}.txt"
 
 
-
-
         with open(output_filename_txt, "w") as text_file:
             text_file.write(text_to_speak)
 
@@ -493,6 +550,28 @@ def speak():
         import traceback
         traceback.print_exc()
         return jsonify({"status": "error", "message": str(e)}), 500
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     # Schritt 1: Konfiguration vorbereiten
