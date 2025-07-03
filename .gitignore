@@ -9,6 +9,8 @@ __pycache__/
 *.wav
 *.txt
 
+bfg-1.14.0.jar
+
 # NOT ignore requirements.txt
 !requirements.txt
 !requirements-dev.txt
