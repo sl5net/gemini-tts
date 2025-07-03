@@ -41,8 +41,11 @@ Before you start, ensure the following software is installed on your Manjaro sys
         
 
         model/de/de_DE-kerstin-low.onnx
+        
         model/de/de_DE-kerstin-low.onnx.json
+        
         model/en/en_GB-jenny_dioco-medium.onnx
+        
         model/en/en_GB-jenny_dioco-medium.onnx.json
         
         model/lid.176.bin
