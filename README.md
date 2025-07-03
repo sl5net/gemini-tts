@@ -34,10 +34,22 @@ Before you start, ensure the following software is installed on your Manjaro sys
     yay -S piper-tts
     ```
 
-2.  **A German Voice Model for Piper:**
-    *   Download a voice, for example, the "kerstin" voice from [Hugging Face](https://huggingface.co/rhasspy/piper-voices/tree/main/de/de_DE/kerstin/low).
-    *   You will need both the `.onnx` and the `.onnx.json` files.
-    *   Save them in a known location, e.g., `~/Downloads/`.
+2.  **Models:**
+    *   Download Models 
+    
+        https://github.com/rhasspy/piper/blob/master/VOICES.md
+        
+
+        model/de/de_DE-kerstin-low.onnx
+        model/de/de_DE-kerstin-low.onnx.json
+        model/en/en_GB-jenny_dioco-medium.onnx
+        model/en/en_GB-jenny_dioco-medium.onnx.json
+        
+        model/lid.176.bin
+        
+        
+    
+    *   Save them in location, e.g., `~/projects/py/TTS/model/`.
 
 3.  **Python 3 and pip:** These are installed by default on Manjaro.
 
