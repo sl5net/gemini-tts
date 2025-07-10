@@ -106,6 +106,23 @@ def clean_text_for_tts(text: str) -> str:
     # This is a simple heuristic looking for paths with multiple slashes.
     text = re.sub(r'\b(?:[a-zA-Z]:)?/[^:\s\n\r]+', ' a file path ', text)
 
+    # 5.1 Remove empty lines
+    # This is a simple heuristic looking for paths with multiple slashes.
+    # text = re.sub(r'[\r\n]$', ' ', text)
+    # text = re.sub(r'^$(\r\n|\r|\n)?', ' ', text)
+    # text = re.sub(r'^\s*?$(\r\n|\r|\n)?', ' ', text)
+    # text = re.sub(r'^[ \t]*?$(\r\n|\r|\n)?', '', text)
+    # text = re.sub(r'^ *?$(\r\n|\r|\n)?', ' ', text)
+    # text = re.sub(r'^\t*?$(\r\n|\r|\n)?', ' ', text)
+
+    # remove empty lines:
+    # https://yanohirota.com/en/regex-blank-line/
+    # https://gist.github.com/fomightez/706c1934a07c08b6c441
+    # https://regex101.com/r/hL2gQ2/1
+    # https://stackoverflow.com/questions/24796205/using-regex-to-delete-extra-empty-lines-of-a-text
+
+
+
     # 6. "Humanize" variable names
     # a. Convert camelCase to "camel case"
     text = re.sub(r'([a-z0-9])([A-Z])', r'\1 \2', text)
@@ -445,9 +462,41 @@ def speak():
         #################################################################
 
         # SCHRITT 1: SPRACHE ERKENNEN (dieser Block kommt jetzt nach oben)
-        predictions = model.predict(text_to_speak_easy)
-        lang_code = predictions[0][0].replace('__label__', '')
-        print(f"Erkannte Sprache für den Text: '{lang_code}'")
+
+        try:
+            predictions = model.predict(text_to_speak_easy)
+            lang_code = predictions[0][0].replace('__label__', '')
+            print(f"Erkannte Sprache für den Text: '{lang_code}'")
+        except Exception as e:
+
+            for _ in range(5):
+                try:
+                    # Generate a random start index
+                    start = random.randint(0, len(text_to_speak_easy))
+
+                    # Calculate the remaining length of the text
+                    remaining_length = len(text_to_speak_easy) - start
+
+                    # Generate a random length for the substring, between 1 and the remaining length
+                    length = random.randint(1, remaining_length)
+
+                    # Extract the random part
+                    random_part = text_to_speak_easy[start:start + length]
+
+                    predictions = model.predict(random_part)
+                    lang_code = predictions[0][0].replace('__label__', '')
+
+                    break  # break out of the loop if no exception occurs
+                except Exception as e:
+                    print(f"An exception occurred: {e}")
+                    print(f"!!! FEHLER beim erkennen der Sprache. TODO: Use random parts many times ???? Error : {e}")
+                    lang_code = 'de'
+                    print(f"!!! Workaround. its set to de")
+                    # continue to the next iteration if an exception occurs
+
+
+
+
 
         # SCHRITT 2: MODELL-PFAD DYNAMISCH AUSWÄHLEN
         if lang_code == 'de' and 'de' in MODELS:
