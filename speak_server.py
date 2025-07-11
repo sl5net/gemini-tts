@@ -9,6 +9,7 @@ import datetime
 import argparse
 import re
 import os
+import random
 from pathlib import Path
 
 # https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin

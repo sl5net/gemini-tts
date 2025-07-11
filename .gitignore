@@ -9,6 +9,8 @@ __pycache__/
 *.wav
 *.txt
 
+*.kate-swp
+
 bfg-1.14.0.jar
 
 # NOT ignore requirements.txt
